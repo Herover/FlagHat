@@ -9,11 +9,11 @@ local flagFolder = "flags16/"
 local matFlag = nil
 
 function ITEM:OnEquip(ply, modifications) --IsValid(modifications.ccode) andstring.lower(system.GetCountry( ))
-	if modifications.ccode == nil then
-		modifications.ccode = self:FigureFlag()
-		print("OnEquip: Figure flag" )
-	end
-	print( "OnEquip: " .. modifications.ccode )
+	--if modifications.ccode == nil then
+	--	modifications.ccode = self:FigureFlag()
+	--	print("OnEquip: Figure flag" )
+	--end
+	--print( "OnEquip: " .. modifications.ccode )
 	-- PS:SendModifications(self.ID, modifications)
 end
 
@@ -29,7 +29,7 @@ function ITEM:PostPlayerDraw(ply, modifications, ply2)
 	if not ply == ply2 then return end
 	if not ply:Alive() then return end
 	if ply.IsSpec and ply:IsSpec() then return end
-	if ply.matFlag == nil then 
+	if ply.matFlag == nil or !string.find(ply.matFlag:GetName(), modifications.ccode .. ".png") then 
 		--if file.Exists( "materials/" .. flagFolder .. modifications.ccode .. ".png", "GAME" ) then
 		--	PS:SendModifications(self.ID, modifications)
 		--	matFlag = Material( flagFolder .. string.lower(system.GetCountry( )) .. ".png", "" )
@@ -78,6 +78,7 @@ function ITEM:Modify(modifications)
 	FlagHolder:SetPos( 10, 30 )
 	FlagHolder:SetSize( 180, 180 )
 	FlagHolder:SetColWide( 32 )
+	FlagHolder:SetVerticalScrollbarEnabled( ) 
 	local files, directories = file.Find( "materials/" .. flagFolder .. "*", "GAME" )
 	for k, v in pairs(files) do 
 		local FlagImg = vgui.Create( "DImageButton" )
@@ -87,10 +88,9 @@ function ITEM:Modify(modifications)
 			modifications.ccode = string.Split(v, ".")[1]
 			print( "Click: " .. v .. modifications.ccode)
 			PS:SendModifications(self.ID, modifications)
-			ply.matFlag = nil
+			--ply.matFlag = nil
 			FlagPanel:Remove()
 		end
-		print( flagFolder .. v )
 		FlagHolder:AddItem( FlagImg )
 	end
 	
